@@ -3,6 +3,11 @@ const ua = navigator.userAgent;
 const isLine = /Line\//i.test(ua);
 const isAndroid = /Android/i.test(ua);
 
+// เริ่มต้น LIFF SDK
+liff.init({ liffId: '2010147382-Q9uMjQYr' })
+  .then(() => console.log('LIFF init success'))
+  .catch(err => console.error('LIFF init failed', err));
+  
 // ถ้าใช่ → แสดง banner แนะนำให้เปิดใน Chrome
 if (isLine && isAndroid) {
   document.getElementById('line-warn').style.display = 'block';
