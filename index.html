@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Recorder</title>
+<!-- โหลด CSS แยกไฟล์ -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+  <p class="title">Voice Recorder</p>
+
+  <!-- Banner เตือน LINE Android (ซ่อนไว้ก่อน JS จะแสดงถ้าจำเป็น) -->
+  <div class="line-warn" id="line-warn">
+    <p>LINE ไม่อนุญาตให้ใช้ไมค์<br>กรุณาเปิดในเบราเซอร์ภายนอก</p>
+    <a id="open-browser-btn" href="#">🌐 เปิดใน Chrome</a>
+  </div>
+
+  <!-- Canvas วาด waveform ขณะบันทึก -->
+  <div class="waveform-wrap" id="waveform-wrap">
+    <canvas id="waveform"></canvas>
+  </div>
+
+  <!-- นาฬิกานับเวลาที่บันทึก -->
+  <div class="timer" id="timer">00:00</div>
+
+  <!-- ปุ่มไมค์ + วงแอนิเมชัน pulse -->
+  <div class="record-wrap">
+    <div class="pulse-ring" id="pulse-ring"></div>
+    <button class="btn-record" id="btn-record" aria-label="เริ่มบันทึกเสียง">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+        stroke="#f0ede8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="13" rx="3"/>
+        <path d="M5 10a7 7 0 0 0 14 0"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="9" y1="22" x2="15" y2="22"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ข้อความบอกสถานะปัจจุบัน -->
+  <p class="status" id="status">กดปุ่มไมค์เพื่อเริ่มบันทึก</p>
+
+  <!-- ปุ่มหยุดบันทึก เล่นเสียง และรีเซต -->
+  <div class="controls">
+    <button class="btn" id="btn-stop" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+      หยุด
+    </button>
+    <button class="btn btn-play" id="btn-play" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      เล่นเสียง
+    </button>
+    <!-- ปุ่มรีเซต — เคลียร์ทุกอย่างกลับสู่สถานะเริ่มต้น -->
+    <button class="btn" id="btn-reset" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+        <path d="M3 3v5h5"/>
+      </svg>
+      รีเซต
+    </button>
+  </div>
+
+  <!-- กล่อง error (ซ่อนไว้ก่อน) -->
+  <div class="error" id="error-msg"></div>
+</div>
+
+<!-- โหลด JS แยกไฟล์ ไว้ท้าย body เพื่อให้ DOM โหลดก่อน -->
+<script src="app.js"></script>
+</body>
+</html>
