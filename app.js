@@ -37,6 +37,7 @@ let seconds       = 0;     // จำนวนวินาทีที่บั�
 let animFrame     = null;  // requestAnimationFrame id สำหรับหยุด waveform
 let analyser      = null;  // Web Audio analyser node (อ่านข้อมูลเสียง real-time)
 let dataArray     = null;  // array เก็บค่าคลื่นเสียงแต่ละ frame
+let mimeType      = '';    // mimeType ที่ browser รองรับ
 
 // --- Helpers ---
 
@@ -48,6 +49,12 @@ function setBtn(el, on) {
 // แปลงวินาที → "MM:SS"
 function fmt(s) {
   return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+}
+
+// เลือก mimeType ที่ browser รองรับ → iOS ใช้ mp4, อื่นๆ ใช้ webm
+function getSupportedMimeType() {
+  const types = ['audio/webm', 'audio/mp4', 'audio/ogg'];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
 }
 
 // วาด waveform ลง canvas ทุก frame ขณะบันทึก
@@ -88,14 +95,17 @@ btnRecord.addEventListener('click', async () => {
     dataArray = new Uint8Array(analyser.frequencyBinCount);
     source.connect(analyser);
 
-    // สร้าง MediaRecorder เพื่อบันทึกเสียงจริงๆ
-    mediaRecorder = new MediaRecorder(stream);
+    // เลือก mimeType ที่ browser รองรับ (iOS → mp4, อื่นๆ → webm)
+    mimeType = getSupportedMimeType();
+
+    // สร้าง MediaRecorder พร้อม mimeType ที่เหมาะสม
+    mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
     audioChunks = [];
     mediaRecorder.ondataavailable = e => audioChunks.push(e.data); // เก็บข้อมูลทีละชิ้น
 
     // เมื่อหยุดบันทึก → รวมชิ้นส่วนเป็น Blob แล้วสร้าง Audio object
     mediaRecorder.onstop = () => {
-      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const blob = new Blob(audioChunks, { type: mimeType || 'audio/webm' }); // ใช้ mimeType ที่รองรับ
       audioEl = new Audio(URL.createObjectURL(blob)); // แปลง blob → URL สำหรับเล่น
       audioEl.onended = () => { btnPlay.innerHTML = ICON_PLAY; }; // reset icon เมื่อเล่นจบ
       setBtn(btnPlay, true);
@@ -191,6 +201,7 @@ btnReset.addEventListener('click', () => {
   seconds       = 0;
   analyser      = null;
   dataArray     = null;
+  mimeType      = '';
 
   // reset UI กลับสถานะเริ่มต้น
   timerEl.textContent = '00:00';
